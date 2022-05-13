@@ -1,0 +1,11 @@
+.container-header{
+  background: var(--secundary-color);
+  padding: .7rem 0;
+}
+
+.container-inside{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 3rem;
+}
