@@ -1,0 +1,99 @@
+.container-form{
+  background: var(--primary-color);
+  width: 80%;
+}
+
+form{
+  margin: 1rem .5rem;
+  overflow: hidden;
+  padding: 1rem;
+  font-family: var(--font-rubik);
+
+  label{
+    margin: .7rem 0;
+  }
+
+  select{
+    width: 100%;
+    outline: none;
+    height: 3rem;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid black;
+    font-family: var(--font-rubik);
+    font-weight: 500;
+    font-size: 15px;
+    padding: 0 .7rem;
+  }
+
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+  }
+
+  input[type=number]{
+    font-family: var(--font-rubik);
+    margin: .6rem 0;
+    padding: 1rem 1rem;
+    outline: none;
+    border: none;
+    -webkit-appearance: textfield;
+    -moz-appearance:textfield;
+    text-align: right;
+    font-size: 28px;
+    background: var(--primary-color);
+  }
+
+  input{
+    width: 100%;
+  }
+
+}
+
+.to{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  margin: .5rem 0;
+}
+
+.inputs{
+  width: 100%;
+}
+
+.add{
+  width: 3rem;
+  padding: .4rem 0;
+  border-radius: 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--third-color);
+  font-family: var(--font-rubik);
+  font-size: 30px;
+  color: var(--primary-color);
+  cursor: pointer;
+  margin: 0 1rem;
+}
+
+input[type=submit]{
+  padding: .8rem 0;
+  margin: 1rem 0;
+  border: none;
+  background: #00b000;
+  font-family: var(--font-rubik);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--primary-color);
+
+  &:hover{
+    background: #008d00;
+  }
+
+}
+
+.coins{
+  background:red;
+}

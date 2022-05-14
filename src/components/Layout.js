@@ -1,4 +1,4 @@
-import "../scss/components/layoutStyle.scss";
+import "../scss/components/_layoutStyle.scss";
 
 export default function Layout({children}){
     return(

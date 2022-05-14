@@ -1,0 +1,44 @@
+.container-options{
+  background: #c2c2c2;
+  color: var(--third-color);
+  font-family: var(--font-rubik);
+  padding: .3rem .4rem;
+  border-radius: 1rem;
+  width: 4.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin: .6rem;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover .remove{
+    visibility: visible;
+    transition: 300ms ease;
+    height: 1rem;
+    width: 1rem;
+  }
+
+  .remove{
+    background: rgba(238, 3, 14, 0.93);
+    width: 0rem;
+    height: 0rem;
+    display: flex;
+    border-radius: 1rem;
+    position: absolute;
+    right: .6rem;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden;
+
+    span{
+      display: block;
+      width: 60%;
+      padding: 1px;
+      background: #363636;
+    }
+
+  }
+
+}

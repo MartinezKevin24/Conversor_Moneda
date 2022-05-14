@@ -2,6 +2,8 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import {useSelector, useDispatch} from "react-redux";
 import {fromCurrency, insertCurrencies, insertData} from "../store/actions";
+import Options from "./Options";
+import "../scss/components/_changeStyle.scss";
 
 export default function Change(){
 
@@ -66,10 +68,7 @@ export default function Change(){
                 setFrom(e.target.value);
                 break;
             case "currency":
-                let array = conv.currencies;
-                array.push(e.target.value);
-                setConv({...conv, currencies: array});
-                setTo(e.target.value);
+                setTo(e.target.value)
                 break;
             case "money":
                 setMoney(e.target.value);
@@ -98,6 +97,27 @@ export default function Change(){
 
     }
 
+    const removeCoin = (moneda) => {
+        let arrayResult = [], arrayConv = [];
+        arrayConv = conv.currencies.filter((currency)=> currency !== moneda);
+        setConv({
+            ...conv,
+            currencies: arrayConv
+        });
+
+        arrayResult = results.filter((total) => total !== results[conv.currencies.indexOf(moneda)])
+        setResults(arrayResult);
+
+    }
+
+    const add = () => {
+        let array = conv.currencies;
+        if(array.indexOf(to) < 0) {
+            array.push(to);
+            setConv({...conv, currencies: array});
+        }
+    }
+
     const handleSubmit = (e) => {
 
         e.preventDefault();
@@ -106,7 +126,7 @@ export default function Change(){
         if(validate()){
             conv.currencies.map((curr, i)=>{
                 const valor = parseFloat(money) * conv.data[curr].value;
-                valores.push(valor.toFixed(3));
+                return valores.push(valor.toFixed(coins[curr].decimal_digits));
             });
 
             setResults(valores);
@@ -119,27 +139,47 @@ export default function Change(){
             <div className="container-form">
                 {typeof coins !== "string" ?
                     <form onSubmit={handleSubmit}>
-                        <p>From: </p>
-                        <select name="base" value={from} onChange={handleChange} disabled={loading}>
-                            {Object.keys(coins).map((coin, i)=>
-                                <option key={i} value={coins[coin].code}>{coins[coin].code} - {coins[coin].name_plural}</option>
-                            )}
-                        </select>
-                        <input type="number" name="money" value={money} onChange={handleChange}/>
-                        <p>To: </p>
-                         <select name="currency" value={to} onChange={handleChange}>
-                            {Object.keys(coins).map((coin, i)=>
-                                <option key={i} value={coins[coin].code}>{coins[coin].code} - {coins[coin].name_plural}</option>
-                            )}
-                        </select>
-                        <input type="submit" value="Submit"/>
+                        <div className="from">
+                            <label>
+                                <p>From: </p>
+                                <select name="base" value={from} onChange={handleChange} disabled={loading}>
+                                    {Object.keys(coins).map((coin, i)=>
+                                        <option key={i} value={coins[coin].code}>{coins[coin].code} - {coins[coin].name_plural}</option>
+                                    )}
+                                </select>
+                            </label>
+                            <input type="number" name="money" align={"right"} value={money} onChange={handleChange}/>
+                        </div>
+                        <div className="to">
+                            <div className={"inputs"}>
+                                <p>To: </p>
+                                <select name="currency" value={to} onChange={handleChange}>
+                                    {Object.keys(coins).map((coin, i)=>
+                                        <option key={i} value={coins[coin].code}>{coins[coin].code} - {coins[coin].name_plural}</option>
+                                    )}
+                                </select>
+                            </div>
+                            <div className="add" onClick={add}>+</div>
+                        </div>
+                        <input type="submit" value="Convertir"/>
                     </form>
                 : null}
                 {
+                    typeof coins !== "string" ?
+                        <div>
+                            {conv.currencies.map((select, i)=>
+                                <Options text={select} key={i} remove={removeCoin}/>
+                            )}
+                        </div>
+                    :null
+                }
+                {
                     results.length !== 0 ?
-                        results.map((result, i)=>{
-                            return <p key={i}>{conv.currencies[i]} {result}</p>
-                        })
+                        <div className={"coins"}>{
+                            results.map((result, i)=>{
+                                return <p key={i}>{conv.currencies[i]} {result}</p>
+                            })
+                        }</div>
                     : null
                 }
             </div>
