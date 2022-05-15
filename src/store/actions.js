@@ -23,9 +23,3 @@ export const insertCurrencies = (data) => {
         payload: data
     }
 }
-
-export const clearData = () => {
-    return{
-        type: CLEAR_DATA,
-    }
-}

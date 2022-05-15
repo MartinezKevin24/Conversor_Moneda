@@ -1,10 +1,10 @@
-import {INSERT_DATA, INSERT_CURRENCIES, CLEAR_DATA, INSERT_FROM} from "./actions";
+import {INSERT_DATA, INSERT_CURRENCIES, INSERT_FROM} from "./actions";
 
 const initialState = {
     dataCurrencies: null,
     dataBase: null,
     dataLatest: null,
-    fromData: null
+    fromData: null,
 }
 
 const convert = (state=initialState, action) => {

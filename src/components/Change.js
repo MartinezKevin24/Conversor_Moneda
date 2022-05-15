@@ -4,6 +4,7 @@ import {useSelector, useDispatch} from "react-redux";
 import {fromCurrency, insertCurrencies, insertData} from "../store/actions";
 import Options from "./Options";
 import "../scss/components/_changeStyle.scss";
+import Message from "./Message";
 
 export default function Change(){
 
@@ -12,13 +13,10 @@ export default function Change(){
     const [coins, setCoins] = useState("");
     const [loading, setLoading] = useState(false)
     const [money, setMoney] = useState(1);
-    const [conv, setConv] = useState({
-        currencies: ['EUR'],
-        latest: "",
-        data: ""
-    });
+    const [codes, setCodes] = useState({currencies: ['EUR']});
     const [errors, setErrors] = useState(null);
-    const [results, setResults] = useState([])
+    const [results, setResults] = useState([]);
+    const [resets, setResets] = useState(false);
 
     const base = useSelector(state => { return state.convert.dataBase});
     const latestData = useSelector(state => { return state.convert.dataLatest});
@@ -29,17 +27,25 @@ export default function Change(){
     useEffect(()=>{
 
         const dataCurrency = async() => {
+
             setLoading(true);
-            if(!currencies){
+
+            if(from === ""){
+                setFrom("USD");
+            }
+
+            if(!currencies || from === ""){
                 const res = await axios.get("https://api.currencyapi.com/v3/currencies?apikey=IcRzEoRNDvfaDTL8RYAxylEwkWKihuvdtwtqeGYe&currencies=");
                 dispatch(insertData(res.data));
                 setCoins(res.data.data);
             }
-            if(from !== fromData){
+            if(from !== fromData || resets || from === ""){
                 const resT = await axios.get(`https://api.currencyapi.com/v3/latest?apikey=IcRzEoRNDvfaDTL8RYAxylEwkWKihuvdtwtqeGYe&currencies=&base_currency=${from}`);
                 dispatch(fromCurrency(from));
                 dispatch(insertCurrencies(resT.data))
-                setConv({...conv, latest: resT.data.meta.last_updated_at});
+                if(resets){
+                    setResets(false);
+                }
             }
             setLoading(false);
         }
@@ -52,30 +58,9 @@ export default function Change(){
             setFrom(fromData);
         }
 
-        if(from !== ""){
-            dataCurrency()
-        }else{
-            setCoins(currencies);
-            setConv({...conv, data: base, latest: latestData});
-        }
+        dataCurrency();
 
-    },[from]);
-
-    const handleChange = (e) => {
-
-        switch (e.target.name){
-            case "base":
-                setFrom(e.target.value);
-                break;
-            case "currency":
-                setTo(e.target.value)
-                break;
-            case "money":
-                setMoney(e.target.value);
-                break;
-        }
-
-    }
+    },[from, resets]);
 
     const validate = () => {
 
@@ -99,23 +84,43 @@ export default function Change(){
 
     const removeCoin = (moneda) => {
         let arrayResult = [], arrayConv = [];
-        arrayConv = conv.currencies.filter((currency)=> currency !== moneda);
-        setConv({
-            ...conv,
-            currencies: arrayConv
-        });
+        arrayConv = codes.currencies.filter((currency)=> currency !== moneda);
+        setCodes({currencies: arrayConv});
 
-        arrayResult = results.filter((total) => total !== results[conv.currencies.indexOf(moneda)])
+        arrayResult = results.filter((total) => total !== results[codes.currencies.indexOf(moneda)])
         setResults(arrayResult);
 
     }
 
     const add = () => {
-        let array = conv.currencies;
+        let array = codes.currencies;
         if(array.indexOf(to) < 0) {
             array.push(to);
-            setConv({...conv, currencies: array});
+            setCodes({currencies: array});
         }
+    }
+
+    const reset = () => {
+        setResets(true);
+    }
+
+    const handleChange = (e) => {
+
+        switch (e.target.name){
+            case "base":
+                setFrom(e.target.value);
+                setCodes({...codes, currencies: ['EUR']})
+                break;
+            case "currency":
+                setTo(e.target.value)
+                break;
+            case "money":
+                setMoney(e.target.value);
+                break;
+            default:
+                break;
+        }
+
     }
 
     const handleSubmit = (e) => {
@@ -124,8 +129,8 @@ export default function Change(){
         let valores = [];
 
         if(validate()){
-            conv.currencies.map((curr, i)=>{
-                const valor = parseFloat(money) * conv.data[curr].value;
+            codes.currencies.map((curr, i)=>{
+                const valor = parseFloat(money) * base[curr].value;
                 return valores.push(valor.toFixed(coins[curr].decimal_digits));
             });
 
@@ -136,52 +141,57 @@ export default function Change(){
 
     return(
         <>
-            <div className="container-form">
-                {typeof coins !== "string" ?
-                    <form onSubmit={handleSubmit}>
-                        <div className="from">
-                            <label>
-                                <p>From: </p>
-                                <select name="base" value={from} onChange={handleChange} disabled={loading}>
-                                    {Object.keys(coins).map((coin, i)=>
-                                        <option key={i} value={coins[coin].code}>{coins[coin].code} - {coins[coin].name_plural}</option>
-                                    )}
-                                </select>
-                            </label>
-                            <input type="number" name="money" align={"right"} value={money} onChange={handleChange}/>
-                        </div>
-                        <div className="to">
-                            <div className={"inputs"}>
-                                <p>To: </p>
-                                <select name="currency" value={to} onChange={handleChange}>
-                                    {Object.keys(coins).map((coin, i)=>
-                                        <option key={i} value={coins[coin].code}>{coins[coin].code} - {coins[coin].name_plural}</option>
-                                    )}
-                                </select>
+            <div className="container-all">
+                <div className="container-form">
+                    {typeof coins !== "string" && currencies !== null && base !== null ?
+                        <form onSubmit={handleSubmit}>
+                            <div className="from">
+                                <label>
+                                    <p>From: </p>
+                                    <select name="base" value={from} onChange={handleChange} disabled={loading}>
+                                        {Object.keys(coins).map((coin, i)=>
+                                            <option key={i} value={coins[coin].code}>{coins[coin].code} - {coins[coin].name_plural}</option>
+                                        )}
+                                    </select>
+                                </label>
+                                <input type="number" name="money" align={"right"} value={money} onChange={handleChange}/>
                             </div>
-                            <div className="add" onClick={add}>+</div>
-                        </div>
-                        <input type="submit" value="Convertir"/>
-                    </form>
-                : null}
-                {
-                    typeof coins !== "string" ?
-                        <div>
-                            {conv.currencies.map((select, i)=>
-                                <Options text={select} key={i} remove={removeCoin}/>
-                            )}
-                        </div>
-                    :null
-                }
-                {
-                    results.length !== 0 ?
-                        <div className={"coins"}>{
+                            <div className="to">
+                                <div className={"inputs"}>
+                                    <p>To: </p>
+                                    <select name="currency" value={to} onChange={handleChange}>
+                                        {Object.keys(base).map((coin, i)=>
+                                            <option key={i} value={coins[coin].code}>{coins[coin].code} - {coins[coin].name_plural}</option>
+                                        )}
+                                    </select>
+                                </div>
+                                <div className="add" onClick={add}>+</div>
+                            </div>
+                            {
+                                codes.currencies.length !== 0 ?
+                                    <div className={"coins"}>
+                                        {codes.currencies.map((select, i)=>
+                                            <Options text={select} key={i} remove={removeCoin}/>
+                                        )}
+                                    </div>
+                                    :null
+                            }
+                            <input type="submit" value="Convertir"/>
+                            <div className="reset" onClick={reset}>Reset</div>
+                        </form>
+                        : null}
+                </div>
+                <div className="container-result">
+                    <h2>Tasa de cambio a:</h2>
+                    <p className={"latest"}>Ultima actualización: {latestData.slice(0,10)}</p>
+                    {
+                        errors ? <Message message={errors}/> : results.length !== 0 ?
                             results.map((result, i)=>{
-                                return <p key={i}>{conv.currencies[i]} {result}</p>
+                                return <p key={i}><span>{coins[codes.currencies[i]].symbol}</span> <span>{result}</span></p>
                             })
-                        }</div>
-                    : null
-                }
+                            : null
+                    }
+                </div>
             </div>
         </>
     );

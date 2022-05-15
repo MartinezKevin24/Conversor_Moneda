@@ -9,6 +9,9 @@ export default function Layout({children}){
                 </div>
             </div>
             <main>{children}</main>
+            <div className="footer">
+                <p>Kevin Martínez - 2022</p>
+            </div>
         </>
     );
 }
