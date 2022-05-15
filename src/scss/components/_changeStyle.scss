@@ -19,6 +19,7 @@
     grid-template: "conversor resultados"
                     /60% 40%;
     margin: 9px 10px;
+    justify-items: center;
   }
 
 }
@@ -37,6 +38,7 @@
     justify-content: center;
     align-items: center;
     max-height: 35rem;
+    width: 95%;
   }
 
 }
@@ -44,7 +46,7 @@
 form{
   margin: 0 .5rem;
   overflow: hidden;
-  padding: 1rem;
+  padding: 1rem 0 2rem 0;
   font-family: var(--font-rubik);
 
   label{
@@ -178,6 +180,7 @@ input[type=submit]{
     margin-bottom: 0;
     max-height: 35rem;
     overflow-y: auto;
+    width: 95%;
   }
 
   p{
