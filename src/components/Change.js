@@ -183,7 +183,11 @@ export default function Change(){
                 </div>
                 <div className="container-result">
                     <h2>Tasa de cambio a:</h2>
-                    <p className={"latest"}>Ultima actualización: {latestData}</p>
+                    {
+                        latestData !== null ?
+                            <p className={"latest"}>Ultima actualización: {latestData}</p>
+                            :null
+                    }
                     {
                         errors ? <Message message={errors}/> : results.length !== 0 ?
                             results.map((result, i)=>{
