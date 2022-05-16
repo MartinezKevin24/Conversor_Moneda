@@ -35,12 +35,12 @@ export default function Change(){
             }
 
             if(!currencies || from === ""){
-                const res = await axios.get("https://api.currencyapi.com/v3/currencies?apikey=IcRzEoRNDvfaDTL8RYAxylEwkWKihuvdtwtqeGYe&currencies=");
+                const res = await axios.get("https://api.currencyapi.com/v3/currencies?apikey=CmvXP1wcluguz5ctXIzMcXTtUsnFWw0Ikco8z7JX&currencies=");
                 dispatch(insertData(res.data));
                 setCoins(res.data.data);
             }
             if(from !== fromData || resets || from === ""){
-                const resT = await axios.get(`https://api.currencyapi.com/v3/latest?apikey=IcRzEoRNDvfaDTL8RYAxylEwkWKihuvdtwtqeGYe&currencies=&base_currency=${from}`);
+                const resT = await axios.get(`https://api.currencyapi.com/v3/latest?apikey=CmvXP1wcluguz5ctXIzMcXTtUsnFWw0Ikco8z7JX&currencies=&base_currency=${from}`);
                 dispatch(fromCurrency(from));
                 dispatch(insertCurrencies(resT.data))
                 if(resets){
